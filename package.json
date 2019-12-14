@@ -1,0 +1,30 @@
+{
+  "name": "telegraf-callback-data",
+  "version": "0.1.0",
+  "description": "Easy callback data management for Telegraf",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write **/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deptyped/telegraf-callback-data.git"
+  },
+  "keywords": [
+    "telegram",
+    "telegraf",
+    "middleware",
+    "bot"
+  ],
+  "author": "deptyped <deptyped@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deptyped/telegraf-callback-data/issues"
+  },
+  "homepage": "https://github.com/deptyped/telegraf-callback-data#readme",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1"
+  }
+}
