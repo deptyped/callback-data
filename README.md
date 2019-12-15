@@ -86,3 +86,6 @@ const regexpCallbackDataFilter = exampleCallbackData.filter({
 });
 console.log(regexpCallbackDataFilter); // /namespace-prefix:\w+:show/
 ```
+
+### Credits
+Thanks to [@JrooTJunior](https://github.com/JrooTJunior), author of [AIOGram](https://github.com/aiogram/aiogram)! This library highly inspired by alternative feature in aiogram framework.
