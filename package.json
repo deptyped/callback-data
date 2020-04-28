@@ -1,6 +1,6 @@
 {
   "name": "telegraf-callback-data",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Easy callback data management for Telegraf",
   "main": "src/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/deptyped/telegraf-callback-data#readme",
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^25.4.0",
     "prettier": "^1.19.1"
   }
 }
