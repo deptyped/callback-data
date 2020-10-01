@@ -71,16 +71,13 @@ exampleCallbackData = new CallbackData(
   ['id', 'action' /* many as you want */]
   /* separator = ':' */
 );
-
 const callbackData = exampleCallbackData.new({
   id: '1337',
   action: 'show',
 });
 console.log(callbackData); // namespace-prefix:1337:show
-
 const parsedCallbackData = exampleCallbackData.parse(callbackData);
 console.log(parsedCallbackData); // { id: "1337", action: "show" }
-
 const regexpCallbackDataFilter = exampleCallbackData.filter({
   action: 'show',
 });
@@ -89,3 +86,4 @@ console.log(regexpCallbackDataFilter); // /namespace-prefix:\w+:show/
 
 ### Credits
 Thanks to [@JrooTJunior](https://github.com/JrooTJunior), author of [AIOGram](https://github.com/aiogram/aiogram)! This library highly inspired by alternative feature in aiogram framework.
+nice work man! keep the good work going
