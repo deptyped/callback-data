@@ -10,10 +10,5 @@ class ExtendableError extends Error {
   }
 }
 
-class CallbackDataOverflowError extends ExtendableError {}
-class CallbackDataParseError extends ExtendableError {}
-
-module.exports = {
-  CallbackDataOverflowError,
-  CallbackDataParseError,
-};
+export class CallbackDataOverflowError extends ExtendableError {}
+export class CallbackDataParseError extends ExtendableError {}
