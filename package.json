@@ -1,6 +1,6 @@
 {
   "name": "telegraf-callback-data",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Easy callback data management for Telegraf",
   "author": "deptyped <deptyped@gmail.com>",
   "homepage": "https://github.com/deptyped/telegraf-callback-data#readme",
@@ -13,8 +13,9 @@
   },
   "keywords": [
     "telegram",
+    "telegram-bot",
+    "telegram-bot-api",
     "telegraf",
-    "middleware",
     "bot"
   ],
   "license": "MIT",
