@@ -14,54 +14,56 @@ $ yarn add telegraf-callback-data
 ```
 
 ### Example
-  
-```js
-const Telegraf = require('telegraf');
-const Markup = require('telegraf/markup');
-const { CallbackData } = require('telegraf-callback-data');
+
+```ts
+import { Telegraf, Markup, Context } from 'telegraf';
+import { CallbackData } from 'telegraf-callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-greetingCD = new CallbackData('greeting', ['type']);
+const greetingData = new CallbackData<{ type: string; }>(
+  'greeting', // namespace identifier
+  ['type'] // data properties
+);
 
-bot.start(({ reply }) =>
-  reply('How to greet?', {
+bot.start((ctx: Context) =>
+  ctx.reply('How to greet?', {
     ...Markup.inlineKeyboard([
-      Markup.callbackButton(
+      Markup.button.callback(
         'oldschool',
-        greetingCD.new({
+        greetingData.create({
           type: 'oldschool',
         })
       ), // callback data is equal to `greeting:oldschool`
 
-      Markup.callbackButton(
+      Markup.button.callback(
         'modern',
-        greetingCD.new({
+        greetingData.create({
           type: 'modern',
         })
       ), // callback data is equal to `greeting:modern`
-    ]).extra(),
+    ]),
   })
 );
 
 bot.action(
-  greetingCD.filter({
-    type: 'oldschool',
+  greetingData.filter({
+    type: 'modern',
   }),
-  ({ answerCbQuery }) => answerCbQuery('Hello')
+  (ctx) => ctx.answerCbQuery('Yo')
 );
 
 bot.action(
-  greetingCD.filter({
-    type: 'modern',
+  greetingData.filter({
+    type: 'oldschool',
   }),
-  ({ answerCbQuery }) => answerCbQuery('Yo')
+  (ctx) => ctx.answerCbQuery('Hello')
 );
 
 bot.launch();
 ```
 
-There's some more complex [examples](examples/): [counter](examples/counter-bot.js) and [menu](examples/menu-bot.js).
+There's some more complex [examples](examples/): [counter](examples/counter-bot.ts) and [menu](examples/menu-bot.ts).
 
 ### API Usage Example
 
@@ -72,7 +74,7 @@ exampleCallbackData = new CallbackData(
   /* separator = ':' */
 );
 
-const callbackData = exampleCallbackData.new({
+const callbackData = exampleCallbackData.create({
   id: '1337',
   action: 'show',
 });

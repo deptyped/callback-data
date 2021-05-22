@@ -1,12 +1,23 @@
-const { Telegraf, Markup } = require('telegraf');
-const { CallbackData } = require('telegraf-callback-data');
+import { Telegraf, Markup, Context, deunionize } from 'telegraf';
+import { CallbackData } from 'telegraf-callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 let counter = 0;
 
-const counterResetCallbackData = new CallbackData('counter', ['action']);
-const counterData = new CallbackData('counter', ['number', 'action']);
+const counterResetCallbackData = new CallbackData<{
+  action: string;
+}>(
+  'counter',
+  ['action']
+);
+const counterData = new CallbackData<{
+  action: string;
+  number: string;
+}>(
+  'counter',
+  ['number', 'action']
+);
 
 const inlineKeyboard = [
   [
@@ -69,7 +80,7 @@ const inlineKeyboard = [
   ]
 ];
 
-bot.start((ctx) =>
+bot.start((ctx: Context) =>
   ctx.reply(`Hi! Counter: ${counter}`, {
     ...Markup.inlineKeyboard(inlineKeyboard)
   })
@@ -79,8 +90,8 @@ bot.action(
   counterData.filter({
     action: 'minus'
   }),
-  async (ctx) => {
-    const { number, action } = counterData.parse(ctx.callbackQuery.data);
+  async (ctx: Context) => {
+    const { number, action } = counterData.parse(deunionize(ctx.callbackQuery).data);
 
     counter -= Number(number);
 
@@ -95,8 +106,8 @@ bot.action(
   counterData.filter({
     action: 'plus'
   }),
-  async (ctx) => {
-    const { number, action } = counterData.parse(ctx.callbackQuery.data);
+  async (ctx: Context) => {
+    const { number, action } = counterData.parse(deunionize(ctx.callbackQuery).data);
 
     counter += Number(number);
 
@@ -111,7 +122,7 @@ bot.action(
   counterResetCallbackData.filter({
     action: 'reset'
   }),
-  async (ctx) => {
+  async (ctx: Context) => {
     counter = 0;
 
     await ctx.answerCbQuery();

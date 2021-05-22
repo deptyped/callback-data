@@ -1,17 +1,20 @@
-const { Telegraf, Markup } = require('telegraf');
-const { CallbackData } = require('telegraf-callback-data');
+import { Context, deunionize, Markup, Telegraf } from 'telegraf';
+import { CallbackData } from 'telegraf-callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const drinksData = new CallbackData('drinks', ['id', 'action']);
+const drinksData = new CallbackData<{
+  id: string;
+  action: string;
+}>('drinks', ['id', 'action']);
 
-bot.start((ctx) =>
+bot.start((ctx: Context) =>
   ctx.reply('Welcome', {
     ...Markup.inlineKeyboard([
       Markup.button.callback(
         'Order Coke',
         drinksData.create({
-          id: 1,
+          id: String(1),
           action: 'order'
         })
       ), // button callback data is equal to `drinks:1:order`
@@ -19,7 +22,7 @@ bot.start((ctx) =>
       Markup.button.callback(
         'Order Juice',
         drinksData.create({
-          id: 2,
+          id: String(2),
           action: 'order'
         })
       ) // button callback data is equal to `drinks:2:order`
@@ -31,8 +34,8 @@ bot.action(
   drinksData.filter({
     action: 'order'
   }),
-  async (ctx) => {
-    const { id, action } = drinksData.parse(ctx.callbackQuery.data);
+  async (ctx: Context) => {
+    const { id, action } = drinksData.parse(deunionize(ctx.callbackQuery).data);
 
     await ctx.answerCbQuery(`You ordered #${id}`, {
       show_alert: true
