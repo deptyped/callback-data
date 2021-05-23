@@ -5,37 +5,28 @@ export interface PackOptions {
   separator: string;
 }
 
-export const pack = <T>(data: T, options: PackOptions): string => {
-  let packedValues = '';
+export const pack = <T>(entries: T, entriesNamesOrder: Set<keyof T>, options: PackOptions): string => {
+  const orderedEntries = []
 
   if (typeof options.namespace === 'string' && options.namespace !== '') {
-    packedValues = `${options.namespace}${options.separator}`;
+    orderedEntries.push(options.namespace)
   }
 
-  const iterator = new Map(Object.entries(data)).entries();
-  let item = iterator.next();
-  while (item.done === false) {
-    const key = item.value[0];
-    const value = item.value[1];
-
-    if (typeof value === 'undefined') {
-      throw new Error(`Missing value for "${key}"`);
+  for (const entryName of entriesNamesOrder) {
+    if (entries.hasOwnProperty(entryName)) {
+      orderedEntries.push(entries[entryName])
     } else {
-      packedValues += value;
-    }
-
-    item = iterator.next();
-
-    if (item.done === false) {
-      packedValues += options.separator;
+      throw new Error(`Missing value for "${entryName}"`);
     }
   }
 
-  if (packedValues.length > 64) {
+  const packedEntries = orderedEntries.join(options.separator)
+
+  if (packedEntries.length > 64) {
     throw new CallbackDataOverflowError(
-      `Callback data size overflow (${packedValues.length} > 64)`
+      `Callback data size overflow (${packedEntries.length} > 64)`
     );
   }
 
-  return packedValues;
+  return packedEntries
 };

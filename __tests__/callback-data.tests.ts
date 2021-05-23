@@ -27,6 +27,13 @@ describe('serialization', () => {
       })
     ).toBe(`${identifier}:1:test`);
 
+    expect(
+      testCallbackData.create({
+        action: 'test',
+        id: String(1)
+      })
+    ).toBe(`${identifier}:1:test`);
+
     // TODO: Remove in 1.0
     expect(
       testCallbackData.new({
@@ -114,6 +121,13 @@ test('should create filter regexp', () => {
     testCallbackData.filter({
       id: String(1),
       action: 'test'
+    })
+  ).toStrictEqual(/identifier:1:test/);
+
+  expect(
+    testCallbackData.filter({
+      action: 'test',
+      id: String(1)
     })
   ).toStrictEqual(/identifier:1:test/);
 

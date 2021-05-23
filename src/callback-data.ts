@@ -3,34 +3,34 @@ import { pack, unpack } from './transformers';
 export type CallbackDataValues = Record<string | number, string>;
 
 export class CallbackData<T extends CallbackDataValues> {
-  private readonly partsNames: Array<keyof T>;
+  private readonly entriesNames: Set<keyof T>;
   private readonly separator: string;
 
   constructor(
     public identifier: string = '',
-    parts: Array<keyof T>,
+    entriesNames: Array<keyof T>,
     separator: string = ':'
   ) {
-    if (!parts) {
-      throw new Error('Argument `parts` is required');
+    if (!entriesNames) {
+      throw new Error('Argument `entriesNames` is required');
     }
-    if (Array.isArray(parts) === false) {
-      throw new Error('Argument `parts` must be an array');
+    if (Array.isArray(entriesNames) === false) {
+      throw new Error('Argument `entriesNames` must be an array');
     }
 
-    this.partsNames = parts;
+    this.entriesNames = new Set(entriesNames);
     this.separator = separator;
   }
 
-  _pack(parts: T): string {
-    return pack<T>(parts, {
+  private _pack(parts: T): string {
+    return pack<T>(parts, this.entriesNames, {
       namespace: this.identifier,
       separator: this.separator
     });
   }
 
-  _unpack(packedData: string): T {
-    return unpack<T>(packedData, this.partsNames, {
+  private _unpack(packedData: string): T {
+    return unpack<T>(packedData, this.entriesNames, {
       namespace: this.identifier,
       separator: this.separator
     });
@@ -45,14 +45,10 @@ export class CallbackData<T extends CallbackDataValues> {
   }
 
   filter(filters: Partial<T> = {}): RegExp {
-    const defaultFilters = Object.fromEntries<T[keyof T]>(
-      new Map<keyof T, T[keyof T]>(
-        this.partsNames.map((name): [keyof T, T[keyof T]] => [
-          name,
-          '\\w+' as T[keyof T]
-        ])
-      )
-    ) as unknown as T;
+    const defaultFilters: T = {} as T;
+    for (const entryName of this.entriesNames) {
+      defaultFilters[entryName] = '\\w+' as T[keyof T];
+    }
 
     return new RegExp(
       this._pack(Object.assign<T, Partial<T>>(defaultFilters, filters))
