@@ -59,6 +59,17 @@ describe('serialization', () => {
       testCallbackData.create(testDataObj);
     }).toThrow(CallbackDataOverflowError);
   });
+
+  test('should throw Error error when separator using in a data', () => {
+    const testCallbackData = new CallbackData('identifier', ['id', 'action']);
+
+    expect(() => {
+      testCallbackData.create({
+        id: String(1),
+        action: 'te:st'
+      });
+    }).toThrow(Error);
+  });
 });
 
 describe('deserialization', () => {

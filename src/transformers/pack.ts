@@ -18,6 +18,12 @@ export const pack = <T>(
 
   for (const entryName of entriesNamesOrder) {
     if (entries.hasOwnProperty(entryName)) {
+      if (String(entries[entryName]).includes(options.separator)) {
+        throw new Error(
+          `Use of separator (${options.separator}) in data is prohibited`
+        );
+      }
+
       orderedEntries.push(entries[entryName]);
     } else {
       throw new Error(`Missing value for "${entryName}"`);
