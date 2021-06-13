@@ -5,22 +5,26 @@ export interface PackOptions {
   separator: string;
 }
 
-export const pack = <T>(entries: T, entriesNamesOrder: Set<keyof T>, options: PackOptions): string => {
-  const orderedEntries = []
+export const pack = <T>(
+  entries: T,
+  entriesNamesOrder: Set<keyof T>,
+  options: PackOptions
+): string => {
+  const orderedEntries = [];
 
   if (typeof options.namespace === 'string' && options.namespace !== '') {
-    orderedEntries.push(options.namespace)
+    orderedEntries.push(options.namespace);
   }
 
   for (const entryName of entriesNamesOrder) {
     if (entries.hasOwnProperty(entryName)) {
-      orderedEntries.push(entries[entryName])
+      orderedEntries.push(entries[entryName]);
     } else {
       throw new Error(`Missing value for "${entryName}"`);
     }
   }
 
-  const packedEntries = orderedEntries.join(options.separator)
+  const packedEntries = orderedEntries.join(options.separator);
 
   if (packedEntries.length > 64) {
     throw new CallbackDataOverflowError(
@@ -28,5 +32,5 @@ export const pack = <T>(entries: T, entriesNamesOrder: Set<keyof T>, options: Pa
     );
   }
 
-  return packedEntries
+  return packedEntries;
 };

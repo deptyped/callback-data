@@ -115,7 +115,7 @@ test('should create filter regexp', () => {
     testCallbackData.filter({
       action: 'test'
     })
-  ).toStrictEqual(/identifier:\w+:test/);
+  ).toStrictEqual(/identifier:.*:test/);
 
   expect(
     testCallbackData.filter({
@@ -135,7 +135,7 @@ test('should create filter regexp', () => {
     testCallbackData.filter({
       id: String(1)
     })
-  ).toStrictEqual(/identifier:1:\w+/);
+  ).toStrictEqual(/identifier:1:.*/);
 
-  expect(testCallbackData.filter()).toStrictEqual(/identifier:\w+:\w+/);
+  expect(testCallbackData.filter()).toStrictEqual(/identifier:.*:.*/);
 });

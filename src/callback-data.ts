@@ -47,7 +47,7 @@ export class CallbackData<T extends CallbackDataValues> {
   filter(filters: Partial<T> = {}): RegExp {
     const defaultFilters: T = {} as T;
     for (const entryName of this.entriesNames) {
-      defaultFilters[entryName] = '\\w+' as T[keyof T];
+      defaultFilters[entryName] = '.*' as T[keyof T];
     }
 
     return new RegExp(
