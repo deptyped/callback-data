@@ -5,15 +5,15 @@ export interface PackOptions {
   separator: string;
 }
 
-export const pack = <T>(
+export const pack = <T extends object>(
   entries: T,
   entriesNamesOrder: Set<keyof T>,
   options: PackOptions
 ): string => {
-  const orderedEntries = [];
+  const orderedEntries: Array<keyof T> = [];
 
-  if (typeof options.namespace === 'string' && options.namespace !== '') {
-    orderedEntries.push(options.namespace);
+  if (options.namespace !== '') {
+    orderedEntries.push(options.namespace as keyof T);
   }
 
   for (const entryName of entriesNamesOrder) {
@@ -24,7 +24,7 @@ export const pack = <T>(
         );
       }
 
-      orderedEntries.push(entries[entryName]);
+      orderedEntries.push(entries[entryName] as unknown as keyof T);
     } else {
       throw new Error(`Missing value for "${entryName}"`);
     }

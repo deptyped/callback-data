@@ -9,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "incremental": true
   },
