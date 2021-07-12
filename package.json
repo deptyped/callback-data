@@ -1,6 +1,6 @@
 {
   "name": "telegraf-callback-data",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Easy callback data management for Telegraf",
   "author": "deptyped <deptyped@gmail.com>",
   "homepage": "https://github.com/deptyped/telegraf-callback-data#readme",
