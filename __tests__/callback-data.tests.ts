@@ -44,7 +44,7 @@ describe('serialization', () => {
   });
 
   test('should throw CallbackDataOverflowError error when callback data reach overflow', () => {
-    const testDataObj = {};
+    const testDataObj: Record<string, string> = {};
 
     for (const i of [...Array(30).keys()]) {
       testDataObj[`d${i}`] = i.toString();
@@ -74,7 +74,7 @@ describe('serialization', () => {
 
 describe('deserialization', () => {
   test('should parse callback data string', () => {
-    const testDataObj = {};
+    const testDataObj: Record<string, string> = {};
 
     for (const i of [...Array(10).keys()]) {
       testDataObj[`d${i}`] = i.toString();
