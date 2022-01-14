@@ -12,9 +12,17 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "incremental": true,
-    "strict": true
+    "strict": true,
+    "charset": "utf8",
+    "forceConsistentCasingInFileNames": true,
+    "newLine": "lf",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": [
-    "src/**/*"
+    "src/"
   ]
 }
