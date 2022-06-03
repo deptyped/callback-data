@@ -1,5 +1,5 @@
 import { Telegraf, Markup, Context, deunionize } from 'telegraf';
-import { CallbackData } from 'telegraf-callback-data';
+import { CallbackData } from '@bot-base/callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -7,17 +7,11 @@ let counter = 0;
 
 const counterResetCallbackData = new CallbackData<{
   action: string;
-}>(
-  'counter',
-  ['action']
-);
+}>('counter', ['action']);
 const counterData = new CallbackData<{
   action: string;
   number: string;
-}>(
-  'counter',
-  ['number', 'action']
-);
+}>('counter', ['number', 'action']);
 
 const inlineKeyboard = [
   [
@@ -91,7 +85,9 @@ bot.action(
     action: 'minus'
   }),
   async (ctx: Context) => {
-    const { number, action } = counterData.parse(deunionize(ctx.callbackQuery).data);
+    const { number, action } = counterData.parse(
+      deunionize(ctx.callbackQuery).data
+    );
 
     counter -= Number(number);
 
@@ -107,7 +103,9 @@ bot.action(
     action: 'plus'
   }),
   async (ctx: Context) => {
-    const { number, action } = counterData.parse(deunionize(ctx.callbackQuery).data);
+    const { number, action } = counterData.parse(
+      deunionize(ctx.callbackQuery).data
+    );
 
     counter += Number(number);
 

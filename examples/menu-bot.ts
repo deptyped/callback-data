@@ -1,5 +1,5 @@
 import { Context, deunionize, Markup, Telegraf } from 'telegraf';
-import { CallbackData } from 'telegraf-callback-data';
+import { CallbackData } from '@bot-base/callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 

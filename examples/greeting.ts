@@ -1,9 +1,9 @@
 import { Telegraf, Markup, Context } from 'telegraf';
-import { CallbackData } from 'telegraf-callback-data';
+import { CallbackData } from '@bot-base/callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const greetingData = new CallbackData<{ type: string; }>(
+const greetingData = new CallbackData<{ type: string }>(
   'greeting', // namespace identifier
   ['type'] // data properties
 );
@@ -14,30 +14,30 @@ bot.start((ctx: Context) =>
       Markup.button.callback(
         'oldschool',
         greetingData.create({
-          type: 'oldschool',
+          type: 'oldschool'
         })
       ), // callback data is equal to `greeting:oldschool`
 
       Markup.button.callback(
         'modern',
         greetingData.create({
-          type: 'modern',
+          type: 'modern'
         })
-      ), // callback data is equal to `greeting:modern`
-    ]),
+      ) // callback data is equal to `greeting:modern`
+    ])
   })
 );
 
 bot.action(
   greetingData.filter({
-    type: 'modern',
+    type: 'modern'
   }),
   (ctx) => ctx.answerCbQuery('Yo')
 );
 
 bot.action(
   greetingData.filter({
-    type: 'oldschool',
+    type: 'oldschool'
   }),
   (ctx) => ctx.answerCbQuery('Hello')
 );

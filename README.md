@@ -6,18 +6,18 @@ when using inline buttons in messages
 ### Installation
 
 ```
-$ npm install telegraf-callback-data
+$ npm install @bot-base/callback-data
 ```
 or using `yarn`:
 ```
-$ yarn add telegraf-callback-data
+$ yarn add @bot-base/callback-data
 ```
 
 ### Example
 
 ```ts
 import { Telegraf, Markup, Context } from 'telegraf';
-import { CallbackData } from 'telegraf-callback-data';
+import { CallbackData } from '@bot-base/callback-data';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -86,8 +86,5 @@ console.log(parsedCallbackData); // { id: "1337", action: "show" }
 const regexpCallbackDataFilter = exampleCallbackData.filter({
   action: 'show',
 });
-console.log(regexpCallbackDataFilter); // /namespace-prefix:\w+:show/
+console.log(regexpCallbackDataFilter); // /namespace-prefix:.*:show/
 ```
-
-### Credits
-Thanks to [@JrooTJunior](https://github.com/JrooTJunior), author of [AIOGram](https://github.com/aiogram/aiogram)! This library highly inspired by alternative feature in aiogram framework.

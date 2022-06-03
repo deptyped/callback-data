@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { CallbackData } = require('telegraf-callback-data');
+const { CallbackData } = require('@bot-base/callback-data');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 

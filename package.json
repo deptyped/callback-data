@@ -1,26 +1,28 @@
 {
-  "name": "telegraf-callback-data",
-  "version": "0.2.6",
-  "description": "Easy callback data management for Telegraf",
+  "name": "@bot-base/callback-data",
+  "version": "0.3.0",
+  "description": "Easy callback data management for Telegram",
   "author": "deptyped <deptyped@gmail.com>",
-  "homepage": "https://github.com/deptyped/telegraf-callback-data#readme",
+  "homepage": "https://github.com/bot-base/callback-data#readme",
   "bugs": {
-    "url": "https://github.com/deptyped/telegraf-callback-data/issues"
+    "url": "https://github.com/bot-base/callback-data/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deptyped/telegraf-callback-data.git"
+    "url": "git+https://github.com/bot-base/callback-data.git"
   },
   "keywords": [
     "telegram",
     "telegram-bot",
     "telegram-bot-api",
-    "telegraf",
-    "bot"
+    "library",
+    "bot",
+    "grammy",
+    "telegraf"
   ],
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
@@ -28,11 +30,11 @@
     "prettier": "prettier --write **/*.ts"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
-    "jest": "^27.4.7",
-    "prettier": "^2.5.1",
-    "ts-jest": "^27.1.2",
-    "typescript": "^4.5.4"
+    "@types/jest": "^27.5.2",
+    "jest": "^28.1.0",
+    "prettier": "^2.6.2",
+    "ts-jest": "^28.0.3",
+    "typescript": "^4.7.2"
   },
   "files": [
     "dist"

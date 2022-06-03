@@ -26,7 +26,7 @@ export const pack = <T extends object>(
 
       orderedEntries.push(entries[entryName] as unknown as keyof T);
     } else {
-      throw new Error(`Missing value for "${entryName}"`);
+      throw new Error(`Missing value for "${String(entryName)}"`);
     }
   }
 
