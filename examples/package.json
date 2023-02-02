@@ -2,7 +2,7 @@
   "name": "examples",
   "private": true,
   "dependencies": {
-    "telegraf": "^4.3.0",
-    "@bot-base/callback-data": "file:../"
+    "callback-data": "file:../",
+    "grammy": "^1.0.0"
   }
 }
