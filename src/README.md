@@ -71,7 +71,7 @@ bot.callbackQuery(
 bot.start();
 ```
 
-There's more complex example [counter-bot](./examples/counter-bot.ts).
+There's more complex example [counter-bot](https://github.com/deptyped/callback-data/blob/main/examples/counter-bot.ts).
 
 ## Usage
 
