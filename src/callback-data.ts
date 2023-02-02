@@ -1,63 +1,107 @@
-import { pack, unpack } from './transformers';
+import type { CallbackData, FilterClause, Schema } from "./types.ts";
+import { deserialize, serialize } from "./transformers.ts";
+import { BOOLEAN_REGEX, NUMBER_REGEX, STRING_REGEX } from "./regex.ts";
 
-export type CallbackDataValues = Record<string | number, string>;
+const CALLBACK_DATA_SIZE_LIMIT = 64;
 
-export class CallbackData<T extends CallbackDataValues> {
-  private readonly entriesNames: Set<keyof T>;
-  private readonly separator: string;
+type Options = {
+  delimiter?: string;
+};
 
-  constructor(
-    public identifier: string = '',
-    entriesNames: Array<keyof T>,
-    separator: string = ':'
-  ) {
-    if (!entriesNames) {
-      throw new Error('Argument `entriesNames` is required');
-    }
-    if (Array.isArray(entriesNames) === false) {
-      throw new Error('Argument `entriesNames` must be an array');
-    }
-
-    this.entriesNames = new Set(entriesNames);
-    this.separator = separator;
+export const createCallbackData = <T extends Schema>(
+  id: string,
+  schema: T,
+  options?: Options,
+) => {
+  if (id.length === 0) {
+    throw new Error("Callback data ID cannot be empty.");
   }
 
-  private _pack(parts: T): string {
-    return pack<T>(parts, this.entriesNames, {
-      namespace: this.identifier,
-      separator: this.separator
-    });
-  }
+  const delimiter = options?.delimiter ?? ":";
 
-  private _unpack(packedData: string): T {
-    return unpack<T>(packedData, this.entriesNames, {
-      namespace: this.identifier,
-      separator: this.separator
-    });
-  }
+  return {
+    pack(data: CallbackData<T>) {
+      const dataValues = [id];
 
-  parse(packedData: string): T {
-    return this._unpack(packedData);
-  }
+      for (const field of Object.keys(data).sort()) {
+        if (!(field in schema)) {
+          continue;
+        }
 
-  create(values: T): string {
-    return this._pack(values);
-  }
+        const dataType = schema[field];
+        const dataValue = data[field];
 
-  filter(filters: Partial<T> = {}): RegExp {
-    const defaultFilters: T = {} as T;
-    for (const entryName of this.entriesNames) {
-      defaultFilters[entryName] = '.*' as T[keyof T];
-    }
+        dataValues.push(serialize(dataValue, dataType));
+      }
 
-    return new RegExp(
-      this._pack(Object.assign<T, Partial<T>>(defaultFilters, filters))
-    );
-  }
+      if (dataValues.join().includes(delimiter)) {
+        throw new Error(
+          `Callback data serialization error. Use of delimiter character (":") in data values is not allowed`,
+        );
+      }
 
-  // TODO: Remove in 1.0
-  // Deprecated
-  new(values: T): string {
-    return this.create(values);
-  }
-}
+      const packedData = dataValues.join(delimiter);
+
+      if (packedData.length > CALLBACK_DATA_SIZE_LIMIT) {
+        throw new Error(
+          `Callback data serialization error. Size overflow (${packedData.length} > ${CALLBACK_DATA_SIZE_LIMIT})`,
+        );
+      }
+
+      return packedData;
+    },
+
+    unpack(packedData: string): CallbackData<T> {
+      const splittedData = packedData.split(delimiter);
+      const unpackedData = new Map();
+      const dataId = splittedData.shift();
+
+      if (dataId !== id) {
+        throw new Error(
+          `Callback data parse error. Invalid callback data ID ("${dataId}" does not match "${id}").`,
+        );
+      }
+
+      for (const field of Object.keys(schema).sort()) {
+        const dataType = schema[field];
+        const dataValue = splittedData.shift();
+
+        if (typeof dataValue === "undefined") {
+          throw new Error(
+            `Callback data parse error. Missing value for "${field}".`,
+          );
+        }
+
+        unpackedData.set(field, deserialize(dataValue, dataType));
+      }
+
+      return Object.fromEntries(unpackedData);
+    },
+
+    filter(clause?: FilterClause<T>) {
+      const regexValues = [id];
+
+      for (const field of Object.keys(schema).sort()) {
+        const dataType = schema[field];
+        const clauseValue = clause?.[field];
+
+        if (typeof clauseValue !== "undefined") {
+          regexValues.push(serialize(clauseValue, dataType));
+          continue;
+        }
+
+        if (dataType === Number) {
+          regexValues.push(NUMBER_REGEX);
+        }
+        if (dataType === String) {
+          regexValues.push(STRING_REGEX);
+        }
+        if (dataType === Boolean) {
+          regexValues.push(BOOLEAN_REGEX);
+        }
+      }
+
+      return new RegExp(`^${regexValues.join(delimiter)}$`);
+    },
+  };
+};

@@ -1,45 +1,43 @@
-import { Telegraf, Markup, Context } from 'telegraf';
-import { CallbackData } from '@bot-base/callback-data';
+import { Bot, InlineKeyboard } from "grammy";
+import { createCallbackData } from "callback-data";
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Bot(process.env.BOT_TOKEN);
 
-const greetingData = new CallbackData<{ type: string }>(
-  'greeting', // namespace identifier
-  ['type'] // data properties
-);
+const greetingData = createCallbackData("greeting", {
+  type: String,
+});
 
-bot.start((ctx: Context) =>
-  ctx.reply('How to greet?', {
-    ...Markup.inlineKeyboard([
-      Markup.button.callback(
-        'oldschool',
-        greetingData.create({
-          type: 'oldschool'
-        })
-      ), // callback data is equal to `greeting:oldschool`
+const greetingKeyboard = new InlineKeyboard()
+  .text(
+    "oldschool",
+    greetingData.pack({
+      type: "oldschool",
+    }), // callback data is equal to "greeting:oldschool"
+  )
+  .text(
+    "modern",
+    greetingData.pack({
+      type: "modern",
+    }), // callback data is equal to "greeting:modern"
+  );
 
-      Markup.button.callback(
-        'modern',
-        greetingData.create({
-          type: 'modern'
-        })
-      ) // callback data is equal to `greeting:modern`
-    ])
-  })
-);
+bot.command("start", (ctx) =>
+  ctx.reply("How to greet?", {
+    reply_markup: greetingKeyboard,
+  }));
 
-bot.action(
+bot.callbackQuery(
   greetingData.filter({
-    type: 'modern'
+    type: "oldschool",
   }),
-  (ctx) => ctx.answerCbQuery('Yo')
+  (ctx) => ctx.answerCallbackQuery("Hello"),
 );
 
-bot.action(
+bot.callbackQuery(
   greetingData.filter({
-    type: 'oldschool'
+    type: "modern",
   }),
-  (ctx) => ctx.answerCbQuery('Hello')
+  (ctx) => ctx.answerCallbackQuery("Yo"),
 );
 
-bot.launch();
+bot.start();

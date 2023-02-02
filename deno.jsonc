@@ -1,0 +1,21 @@
+{
+  "fmt": {
+    "options": { "proseWrap": "preserve" },
+    "files": {
+      "exclude": ["./out/"]
+    }
+  },
+  "lint": {
+    "files": {
+      "exclude": ["./out/"]
+    }
+  },
+  "tasks": {
+    "dev": "deno run --watch src/mod.ts"
+  },
+  "test": {
+    "files": {
+      "exclude": ["./out/"]
+    }
+  }
+}

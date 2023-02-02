@@ -1,133 +1,87 @@
-import { Telegraf, Markup, Context, deunionize } from 'telegraf';
-import { CallbackData } from '@bot-base/callback-data';
+import { Bot, InlineKeyboard } from "grammy";
+import { createCallbackData } from "callback-data";
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Bot(process.env.BOT_TOKEN);
 
 let counter = 0;
 
-const counterResetCallbackData = new CallbackData<{
-  action: string;
-}>('counter', ['action']);
-const counterData = new CallbackData<{
-  action: string;
-  number: string;
-}>('counter', ['number', 'action']);
+const resetCounterData = createCallbackData("reset", {});
+const counterData = createCallbackData("counter", {
+  action: String,
+  number: Number,
+});
 
-const inlineKeyboard = [
-  [
-    Markup.button.callback(
-      '+1',
-      counterData.create({
-        number: String(1),
-        action: 'plus'
-      })
-    ), // button callback data is equal to `counter:1:plus`
+const counterKeyboard = new InlineKeyboard()
+  .text(
+    "+1",
+    counterData.pack({
+      number: 1,
+      action: "plus",
+    }), // callback data is equal to "counter:1:plus"
+  )
+  .text(
+    "+5",
+    counterData.pack({
+      number: 5,
+      action: "plus",
+    }), // callback data is equal to "counter:5:plus"
+  )
+  .row()
+  .text(
+    "-1",
+    counterData.pack({
+      number: 1,
+      action: "minus",
+    }), // callback data is equal to "counter:1:minus"
+  )
+  .text(
+    "-5",
+    counterData.pack({
+      number: 5,
+      action: "minus",
+    }), // callback data is equal to "counter:5:minus"
+  )
+  .row()
+  .text(
+    "Reset",
+    resetCounterData.pack({}), // callback data is equal to "reset"
+  );
 
-    Markup.button.callback(
-      '+5',
-      counterData.create({
-        number: String(5),
-        action: 'plus'
-      })
-    ), // button callback data is equal to `counter:5:plus`
-
-    Markup.button.callback(
-      '+15',
-      counterData.create({
-        number: String(15),
-        action: 'plus'
-      })
-    ) // button callback data is equal to `counter:15:plus`
-  ],
-  [
-    Markup.button.callback(
-      '-1',
-      counterData.create({
-        number: String(1),
-        action: 'minus'
-      })
-    ), // button callback data is equal to `counter:1:minus`
-
-    Markup.button.callback(
-      '-5',
-      counterData.create({
-        number: String(5),
-        action: 'minus'
-      })
-    ), // button callback data is equal to `counter:5:minus`
-
-    Markup.button.callback(
-      '-15',
-      counterData.create({
-        number: String(15),
-        action: 'minus'
-      })
-    ) // button callback data is equal to `counter:15:minus`
-  ],
-  [
-    Markup.button.callback(
-      'Reset',
-      counterResetCallbackData.create({
-        action: 'reset'
-      })
-    ) // button callback data is equal to `counter:reset`
-  ]
-];
-
-bot.start((ctx: Context) =>
+bot.command("start", (ctx) =>
   ctx.reply(`Hi! Counter: ${counter}`, {
-    ...Markup.inlineKeyboard(inlineKeyboard)
-  })
-);
+    reply_markup: counterKeyboard,
+  }));
 
-bot.action(
-  counterData.filter({
-    action: 'minus'
-  }),
-  async (ctx: Context) => {
-    const { number, action } = counterData.parse(
-      deunionize(ctx.callbackQuery).data
+bot.callbackQuery(
+  counterData.filter(),
+  async (ctx) => {
+    const { number, action } = counterData.unpack(
+      ctx.callbackQuery.data,
     );
 
-    counter -= Number(number);
+    if (action === "plus") {
+      counter += Number(number);
+    } else if (action === "minus") {
+      counter -= Number(number);
+    }
 
-    await ctx.answerCbQuery();
+    await ctx.answerCallbackQuery();
     await ctx.editMessageText(`Counter: ${counter}`, {
-      ...Markup.inlineKeyboard(inlineKeyboard)
+      reply_markup: counterKeyboard,
     });
-  }
+  },
 );
 
-bot.action(
-  counterData.filter({
-    action: 'plus'
-  }),
-  async (ctx: Context) => {
-    const { number, action } = counterData.parse(
-      deunionize(ctx.callbackQuery).data
-    );
-
-    counter += Number(number);
-
-    await ctx.answerCbQuery();
-    await ctx.editMessageText(`Counter: ${counter}`, {
-      ...Markup.inlineKeyboard(inlineKeyboard)
-    });
-  }
-);
-
-bot.action(
-  counterResetCallbackData.filter({
-    action: 'reset'
-  }),
-  async (ctx: Context) => {
+bot.callbackQuery(
+  resetCounterData.filter(),
+  async (ctx) => {
     counter = 0;
 
-    await ctx.answerCbQuery();
+    await ctx.answerCallbackQuery();
     await ctx.editMessageText(`Counter: ${counter}`, {
-      ...Markup.inlineKeyboard(inlineKeyboard)
+      reply_markup: counterKeyboard,
     });
-  }
+  },
 );
 
-bot.launch();
+bot.start();
