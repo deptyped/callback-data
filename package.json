@@ -1,6 +1,6 @@
 {
   "name": "callback-data",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Easy callback data management for Telegram bots",
   "author": "deptyped <deptyped@gmail.com>",
   "homepage": "https://github.com/deptyped/callback-data#readme",
@@ -30,8 +30,8 @@
     "prepack": "cp ./src/README.md README.md"
   },
   "devDependencies": {
-    "deno2node": "^1.7.1",
-    "typescript": "^4.9.5"
+    "deno2node": "^1.9.0",
+    "typescript": "^5.2.2"
   },
   "files": [
     "dist"
