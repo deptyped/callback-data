@@ -1,5 +1,6 @@
 import {
   assertEquals,
+  assertMatch,
   assertThrows,
 } from "https://deno.land/std@0.174.0/testing/asserts.ts";
 import { createCallbackData } from "../src/callback-data.ts";
@@ -93,20 +94,55 @@ Deno.test("create callback data filter", () => {
     callbackData.filter({
       data1: 1337,
     }),
-    new RegExp(`^test:1337:${STRING_REGEX}:${BOOLEAN_REGEX}$`),
+    new RegExp(`^test:1337:${STRING_REGEX.source}:${BOOLEAN_REGEX.source}$`),
   );
 
   assertEquals(
     callbackData.filter({
       data2: "text",
     }),
-    new RegExp(`^test:${NUMBER_REGEX}:text:${BOOLEAN_REGEX}$`),
+    new RegExp(`^test:${NUMBER_REGEX.source}:text:${BOOLEAN_REGEX.source}$`),
+  );
+
+  assertEquals(
+    callbackData.filter({
+      data2: "тест",
+    }),
+    new RegExp(`^test:${NUMBER_REGEX.source}:тест:${BOOLEAN_REGEX.source}$`),
   );
 
   assertEquals(
     callbackData.filter({
       data3: true,
     }),
-    new RegExp(`^test:${NUMBER_REGEX}:${STRING_REGEX}:1$`),
+    new RegExp(`^test:${NUMBER_REGEX.source}:${STRING_REGEX.source}:1$`),
+  );
+});
+
+Deno.test("match callback data filter", () => {
+  const callbackData = createCallbackData("test", {
+    data1: Number,
+    data2: String,
+    data3: Boolean,
+  });
+
+  assertMatch(
+    "test:1337:test:1",
+    callbackData.filter({
+      data1: 1337,
+    }),
+  );
+  assertMatch(
+    "test:1337:тест:1",
+    callbackData.filter({
+      data1: 1337,
+    }),
+  );
+
+  assertMatch(
+    "test:1337:тест:1",
+    callbackData.filter({
+      data2: "тест",
+    }),
   );
 });

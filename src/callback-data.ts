@@ -91,13 +91,13 @@ export const createCallbackData = <T extends Schema>(
         }
 
         if (dataType === Number) {
-          regexValues.push(NUMBER_REGEX);
+          regexValues.push(NUMBER_REGEX.source);
         }
         if (dataType === String) {
-          regexValues.push(STRING_REGEX);
+          regexValues.push(STRING_REGEX.source);
         }
         if (dataType === Boolean) {
-          regexValues.push(BOOLEAN_REGEX);
+          regexValues.push(BOOLEAN_REGEX.source);
         }
       }
 
