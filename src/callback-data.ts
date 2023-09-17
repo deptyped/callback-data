@@ -36,7 +36,7 @@ export const createCallbackData = <T extends Schema>(
 
       if (dataValues.join().includes(delimiter)) {
         throw new Error(
-          `Callback data serialization error. Use of delimiter character (":") in data values is not allowed`,
+          `Callback data serialization error. Use of delimiter character ("${delimiter}") in data values is not allowed`,
         );
       }
 
