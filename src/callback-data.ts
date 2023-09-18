@@ -1,6 +1,6 @@
 import type { CallbackData, FilterClause, Schema } from "./types.ts";
 import { deserialize, serialize } from "./transformers.ts";
-import { BOOLEAN_REGEX, NUMBER_REGEX, STRING_REGEX } from "./regex.ts";
+import { VALUE_REGEX } from "./regex.ts";
 
 const CALLBACK_DATA_SIZE_LIMIT = 64;
 
@@ -18,9 +18,18 @@ export const createCallbackData = <T extends Schema>(
   }
 
   const delimiter = options?.delimiter ?? ":";
+  const schemaSize = Object.keys(schema).length;
+  const sortedSchema = Object.keys(schema).sort();
 
   return {
     pack(data: CallbackData<T>) {
+      const valuesCount = Object.keys(data).length;
+      if (valuesCount !== schemaSize) {
+        throw new Error(
+          `Callback data serialization error. Invalid number of callback data values (defined in schema ${schemaSize}, received ${valuesCount}).`,
+        );
+      }
+
       const dataValues = [id];
 
       for (const field of Object.keys(data).sort()) {
@@ -36,7 +45,7 @@ export const createCallbackData = <T extends Schema>(
 
       if (dataValues.join().includes(delimiter)) {
         throw new Error(
-          `Callback data serialization error. Use of delimiter character ("${delimiter}") in data values is not allowed`,
+          `Callback data serialization error. Use of delimiter character ("${delimiter}") in values is not allowed`,
         );
       }
 
@@ -58,19 +67,19 @@ export const createCallbackData = <T extends Schema>(
 
       if (dataId !== id) {
         throw new Error(
-          `Callback data parse error. Invalid callback data ID ("${dataId}" does not match "${id}").`,
+          `Callback data parsing error. Invalid callback data ID ("${dataId}" does not match "${id}").`,
         );
       }
 
-      for (const field of Object.keys(schema).sort()) {
-        const dataType = schema[field];
-        const dataValue = splittedData.shift();
+      if (splittedData.length !== schemaSize) {
+        throw new Error(
+          `Callback data parsing error. Invalid number of callback data values (defined in schema ${schemaSize}, received ${splittedData.length}).`,
+        );
+      }
 
-        if (typeof dataValue === "undefined") {
-          throw new Error(
-            `Callback data parse error. Missing value for "${field}".`,
-          );
-        }
+      for (const field of sortedSchema) {
+        const dataType = schema[field];
+        const dataValue = splittedData.shift() as string;
 
         unpackedData.set(field, deserialize(dataValue, dataType));
       }
@@ -81,7 +90,7 @@ export const createCallbackData = <T extends Schema>(
     filter(clause?: FilterClause<T>) {
       const regexValues = [id];
 
-      for (const field of Object.keys(schema).sort()) {
+      for (const field of sortedSchema) {
         const dataType = schema[field];
         const clauseValue = clause?.[field];
 
@@ -90,15 +99,7 @@ export const createCallbackData = <T extends Schema>(
           continue;
         }
 
-        if (dataType === Number) {
-          regexValues.push(NUMBER_REGEX.source);
-        }
-        if (dataType === String) {
-          regexValues.push(STRING_REGEX.source);
-        }
-        if (dataType === Boolean) {
-          regexValues.push(BOOLEAN_REGEX.source);
-        }
+        regexValues.push(VALUE_REGEX.source);
       }
 
       return new RegExp(`^${regexValues.join(delimiter)}$`);

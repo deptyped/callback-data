@@ -11,12 +11,6 @@ keyboards.
 $ npm install callback-data
 ```
 
-or using `yarn`:
-
-```
-$ yarn add callback-data
-```
-
 ### Deno
 
 ```ts
@@ -76,7 +70,7 @@ There's more complex example
 
 ## Usage
 
-### Create callback data
+### Create callback data builder
 
 ```ts
 const callbackData = createCallbackData(
@@ -124,5 +118,5 @@ const regex = callbackData.filter({
   id: 1337,
 });
 
-console.log(regex); // /^data:1337:\w+:\d$/
+console.log(regex); // /^data:1337:(.+)?:(.+)?$/
 ```
