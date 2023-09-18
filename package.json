@@ -1,6 +1,6 @@
 {
   "name": "callback-data",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Easy callback data management for Telegram bots",
   "author": "deptyped <deptyped@gmail.com>",
   "homepage": "https://github.com/deptyped/callback-data#readme",
